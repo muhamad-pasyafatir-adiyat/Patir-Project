@@ -20,7 +20,7 @@ export function FadeIn({
   x = 0,
   y = 30,
 }: FadeInProps) {
-  const MotionComponent = useMemo(() => motion.create(as as never), [as])
+  const MotionComponent = useMemo(() => motion.create(as as never) as ElementType, [as])
 
   return (
     <MotionComponent
