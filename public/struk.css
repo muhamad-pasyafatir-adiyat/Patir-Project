@@ -1,0 +1,104 @@
+/* =========================================
+   THERMAL RECEIPT PRINT STYLES (58mm / 80mm)
+   ========================================= */
+
+@media print {
+    /* Hide everything else */
+    .no-print, .header, .container {
+        display: none !important;
+    }
+
+    /* Print Setup */
+    @page {
+        margin: 0;
+        size: 58mm auto; /* Optimized for Android standard thermal printers */
+    }
+
+    body {
+        background: #fff;
+        margin: 0;
+        padding: 0;
+        color: #000;
+        font-family: 'Courier New', Courier, monospace; /* Monospace is best for thermal */
+    }
+
+    /* The actual receipt container */
+    #receiptContainer {
+        display: block !important;
+        width: 55mm; /* slightly less than 58mm to account for printer margins */
+        margin: 0 auto;
+        padding: 5mm;
+        box-sizing: border-box;
+        font-size: 12px;
+        line-height: 1.4;
+    }
+
+    .receipt-header {
+        text-align: center;
+        margin-bottom: 10px;
+        border-bottom: 1px dashed #000;
+        padding-bottom: 10px;
+    }
+
+    .receipt-header h2 {
+        font-size: 18px;
+        margin: 0 0 5px 0;
+        text-transform: uppercase;
+    }
+    
+    .receipt-header p {
+        margin: 0;
+        font-size: 10px;
+    }
+
+    .receipt-meta {
+        font-size: 11px;
+        margin-bottom: 10px;
+        border-bottom: 1px dashed #000;
+        padding-bottom: 5px;
+    }
+
+    .receipt-meta div {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 3px;
+    }
+
+    .receipt-items {
+        width: 100%;
+        margin-bottom: 10px;
+        border-collapse: collapse;
+    }
+    
+    .receipt-items th {
+        text-align: left;
+        border-bottom: 1px dashed #000;
+        padding-bottom: 3px;
+        font-weight: normal;
+    }
+
+    .receipt-items td {
+        padding: 3px 0;
+        vertical-align: top;
+    }
+    
+    .item-name { max-width: 45mm; }
+    .item-qty { text-align: center; width: 10mm; }
+    .item-subtotal { text-align: right; width: 20mm; }
+
+    .receipt-total {
+        border-top: 1px dashed #000;
+        padding-top: 5px;
+        text-align: right;
+        font-weight: bold;
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+
+    .receipt-footer {
+        text-align: center;
+        font-size: 10px;
+        border-top: 1px dashed #000;
+        padding-top: 10px;
+    }
+}

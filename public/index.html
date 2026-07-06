@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Triicof - Coffee & Snack</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar glass">
+        <div class="logo">
+            <img src="img/logo.jpeg" alt="Triicof Logo" class="logo-img">
+        </div>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="menu.html">Menu</a></li>
+            <li><a href="location.html">Location</a></li>
+        </ul>
+        <div class="nav-actions">
+            <div class="cart-icon" id="cartBtn">
+                <i class="fa-solid fa-basket-shopping"></i>
+                <span class="badge" id="cartBadge">0</span>
+            </div>
+            <div class="menu-toggle" id="mobileMenuBtn">
+                <i class="fa-solid fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero / Home Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1>TRIICOF</h1>
+            <h2>COFFEE & SNACK</h2>
+            <p class="hours"><i class="fa-regular fa-clock"></i> BUKA SETIAP HARI PUKUL 09.00 - 21.00</p>
+            <a href="menu.html" class="btn-primary">Lihat Menu <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+        <!-- Abstract shape decorations to make it dynamic -->
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+    </section>
+
+    <!-- Order / Cart Modal -->
+    <div class="modal fade" id="cartModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-basket-shopping"></i> Orderan Anda</h2>
+                <span class="close-btn" id="closeCart">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="cartItems" class="cart-items">
+                    <!-- Cart items listed here -->
+                </div>
+                
+                <div class="checkout-form" id="checkoutForm" style="display: none;">
+                    <h3>Informasi Pemesan</h3>
+                    <input type="text" id="customerName" placeholder="Masukkan Nama Anda" required>
+                    <h3 style="margin-top:20px;">Metode Pembayaran</h3>
+                    <div class="payment-methods" id="paymentMethods">
+                        <div class="pay-btn selected" data-method="Cash">
+                            <i class="fa-solid fa-money-bill-wave"></i> Bayar Kasir
+                        </div>
+                        <div class="pay-btn" data-method="QRIS">
+                            <i class="fa-solid fa-qrcode"></i> E-Wallet
+                        </div>
+                        <div class="pay-btn" data-method="Transfer">
+                            <i class="fa-solid fa-building-columns"></i> Transfer
+                        </div>
+                    </div>
+                    
+                    <div class="qris-container" id="qrisContainer">
+                        <p style="margin-bottom:10px; font-weight:600; color:var(--primary-dark);">📱 Scan QR dengan M-Banking / E-Wallet:</p>
+                        <div class="qris-box">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg" alt="MOCK QRIS" style="width: 150px; height: 150px;">
+                            <strong style="margin-top:10px;">TRIICOF COFFEE</strong>
+                        </div>
+                        <p style="font-size:0.9rem; color:#64748b;">Tekan tombol di bawah ini <b>HANYA JIKA</b> Anda sudah mentransfer.</p>
+                    </div>
+
+                    <div class="qris-container" id="transferContainer">
+                        <p style="margin-bottom:10px; font-weight:600; color:var(--primary-dark);">🏦 Silakan Transfer ke Rekening:</p>
+                        <div class="qris-box" style="padding: 20px; text-align: left; align-items: flex-start; justify-content: center; width: 100%; max-width: 250px;">
+                            <p style="margin-bottom: 5px; color: #64748b; font-size: 0.9rem;">Bank Tujuan:</p>
+                            <h3 style="color: var(--primary-dark); margin-bottom: 15px;">BCA (Bank Central Asia)</h3>
+                            <p style="margin-bottom: 5px; color: #64748b; font-size: 0.9rem;">No. Rekening:</p>
+                            <h3 style="color: var(--primary-dark); margin-bottom: 15px; font-family: monospace; font-size: 1.4rem;">0987654321</h3>
+                            <p style="margin-bottom: 5px; color: #64748b; font-size: 0.9rem;">Atas Nama:</p>
+                            <strong style="color: #334155;">Triicof Outlet</strong>
+                        </div>
+                        <p style="font-size:0.9rem; color:#64748b;">Tekan tombol di bawah ini <b>HANYA JIKA</b> Anda sudah mentransfer.</p>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 15px;">
+                        <label for="orderNotes">Catatan Pesanan (Opsional):</label>
+                        <input type="text" id="orderNotes" placeholder="Misal: Esnya sedikit, gulanya dikurangi..." style="width: 100%; padding: 10px; border-radius: 10px; border: 1px solid rgba(0,0,0,0.1); font-family: 'Poppins', sans-serif; box-sizing: border-box;">
+                    </div>
+
+                    <div class="cart-total" style="margin-top:15px;">
+                        <span>Total Bayar:</span>
+                        <strong id="cartTotalPrice">Rp 0</strong>
+                    </div>
+                    <button id="btnOrder" class="btn-primary full-width">Kirim Pesanan Sekarang!</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Triicof Coffee & Snack. All rights reserved.</p>
+    </footer>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">Pesanan Berhasil Dikirim!</div>
+    <!-- Floating WA Widget -->
+    <a href="https://wa.me/6281350360083?text=Halo%20Admin%20Triicof%20Coffee,%20saya%20punya%20pertanyaan%20sebelum%20memesan:" class="floating-wa-btn" target="_blank" title="Chat dengan Admin">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
+
+    <script src="script.js"></script>
+</body>
+</html>

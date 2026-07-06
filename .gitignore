@@ -1,0 +1,17 @@
+# Dependencies
+node_modules/
+
+# Rahasia & konfigurasi lokal
+.env
+
+# Database lokal (berisi data pelanggan)
+triicof.db
+*.db
+*.sqlite
+
+# File ekspor
+*.xlsx
+
+# OS
+Thumbs.db
+.DS_Store

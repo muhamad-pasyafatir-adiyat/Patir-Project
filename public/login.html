@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Triicof POS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Montserrat:wght@500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+        .login-box {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px) saturate(200%);
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        .login-box h2 {
+            color: var(--primary-dark);
+            margin-bottom: 20px;
+            font-family: 'Montserrat', sans-serif;
+        }
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #64748b;
+            font-weight: 600;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 15px;
+            border: 1px solid rgba(0,0,0,0.1);
+            background: rgba(255, 255, 255, 0.5);
+            font-family: inherit;
+            outline: none;
+            transition: all 0.3s;
+            box-sizing: border-box;
+        }
+        .input-group input:focus {
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2);
+        }
+        .btn-login {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 15px;
+            width: 100%;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+        }
+        .btn-login:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        #errorMsg {
+            color: #ef4444;
+            font-size: 0.9rem;
+            margin-top: 15px;
+            display: none;
+            background: rgba(239, 68, 68, 0.1);
+            padding: 10px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <h2 style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+            <div style="background: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary); box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+                <i class="fa-solid fa-mug-hot"></i>
+            </div>
+            Triicof Cashier
+        </h2>
+        <p style="color:#64748b; font-size:0.9rem; margin-bottom:25px;">Pusat Kendali Pengajuan Pesanan</p>
+        <form id="loginForm">
+            <div class="input-group">
+                <label><i class="fa-solid fa-user"></i> Username</label>
+                <input type="text" id="username" placeholder="Masukkan username" required autocomplete="off" autofocus>
+            </div>
+            <div class="input-group">
+                <label><i class="fa-solid fa-lock"></i> Password rahasia</label>
+                <input type="password" id="password" placeholder="Masukkan sandi rahasia" required autocomplete="current-password">
+            </div>
+            <button type="submit" class="btn-login" id="btnLogin">Masuk Dasbor <i class="fa-solid fa-arrow-right"></i></button>
+            <p id="errorMsg">Username atau password salah!</p>
+        </form>
+    </div>
+    <script src="login.js"></script>
+</body>
+</html>

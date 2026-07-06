@@ -1,0 +1,22 @@
+{
+  "name": "triicof-web",
+  "version": "1.0.0",
+  "description": "Point of Sale and Ordering Web for Triicof",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^17.4.2",
+    "express": "^4.22.1",
+    "express-rate-limit": "^8.3.2",
+    "express-session": "^1.19.0",
+    "helmet": "^8.2.0",
+    "multer": "^2.1.1",
+    "sqlite3": "^6.0.1",
+    "xlsx": "^0.18.5",
+    "xss": "^1.0.15"
+  }
+}

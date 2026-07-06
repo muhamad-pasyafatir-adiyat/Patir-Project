@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Triicof POS Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Admin Specific CSS -->
+    <style>
+        :root {
+            --primary: #2563eb;       
+            --primary-dark: #1e40af;  
+            --bg-glass: rgba(255, 255, 255, 0.5);
+            --bg-glass-heavy: rgba(255, 255, 255, 0.85);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.6);
+            --shadow-glass: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+            --radius: 24px;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Montserrat', sans-serif;}
+        h1, h2, h3, h4, .admin-tab, .btn, strong, th { font-family: 'Poppins', sans-serif;}
+        
+        body { 
+            background: linear-gradient(-45deg, #f0f4ff, #ffffff, #e0e7ff, #f8fafc);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: #1e293b;
+            min-height: 100vh;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .header { 
+            background: var(--bg-glass-heavy);
+            backdrop-filter: blur(25px) saturate(200%);
+            color: var(--primary-dark); 
+            padding: 20px 40px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            border-bottom: var(--glass-border);
+            box-shadow: var(--shadow-glass);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header h1 { font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 12px;}
+        
+        .header-logo-container {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: white;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
+            flex-shrink: 0;
+        }
+        .header-logo-container img {
+            min-width: 160%;
+            min-height: 160%;
+            object-fit: cover;
+            object-position: center;
+        }
+        
+        .status-badge {
+            background: rgba(255, 255, 255, 0.7);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            border: var(--glass-border);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+        }
+        .status-dot { height: 12px; width: 12px; background-color: #10b981; border-radius: 50%; display: inline-block; margin-right: 8px; box-shadow: 0 0 10px #10b981;}
+        
+        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+        
+        /* Tabs */
+        .admin-nav {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .admin-tab {
+            padding: 12px 30px;
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(10px);
+            border: var(--glass-border);
+            border-radius: 30px;
+            font-size: 1.1rem;
+            color: var(--primary-dark);
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .admin-tab.active, .admin-tab:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .view-section { display: none; }
+        .view-section.active { display: block; animation: scaleIn 0.4s ease forwards; }
+
+        .info-card { 
+            background: var(--bg-glass); 
+            backdrop-filter: blur(20px);
+            padding: 25px; 
+            border-radius: var(--radius); 
+            box-shadow: var(--shadow-glass); 
+            margin-bottom: 30px; 
+            text-align: center; 
+            border: var(--glass-border); 
+        }
+        .info-card h2 { color: var(--primary-dark); margin-bottom: 5px;}
+        
+        /* LIVE ORDERS */
+        .orders-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; }
+        
+        .order-card { 
+            background: var(--bg-glass-heavy); 
+            backdrop-filter: blur(15px);
+            border-radius: var(--radius); 
+            padding: 25px; 
+            box-shadow: var(--shadow-glass); 
+            border: var(--glass-border); 
+            border-left: 6px solid var(--primary); 
+            transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .order-card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(37, 99, 235, 0.15);}
+        .order-card.new { animation: pulse 2s infinite; border-left-color: #f59e0b; }
+        
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(245, 158, 11, 0); } 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); } }
+        @keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        
+        .order-header { display: flex; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 10px;}
+        .order-id { font-weight: bold; color: var(--primary-dark); }
+        .order-time { color: #64748b; font-size: 14px; font-weight: 500;}
+        .customer-name { font-size: 18px; font-weight: 700; margin-bottom: 15px; color: var(--primary);}
+        .order-items { margin-bottom: 20px; font-size: 15px; color: #334155; list-style-type: none;}
+        .order-items li { margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px dashed rgba(0,0,0,0.05); display: flex; justify-content: space-between;}
+        .order-total { font-size: 1.2rem; font-weight: 800; color: #0f172a; margin-bottom: 20px; text-align: right; background: rgba(59, 130, 246, 0.1); padding: 10px; border-radius: 12px;}
+        .actions { display: flex; gap: 15px; }
+        .btn { flex: 1; padding: 12px; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.3s;}
+        .btn-print { background: rgba(255,255,255,0.7); color: var(--primary-dark); border: var(--glass-border); box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .btn-print:hover { background: var(--primary); color: white; }
+        .btn-done { background: #10b981; color: white; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);}
+        .btn-done:hover { background: #059669; transform: translateY(-2px);}
+
+        /* REPORTS & HISTORY */
+        .report-filters {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            padding: 8px 20px;
+            background: rgba(255,255,255,0.4);
+            border: var(--glass-border);
+            border-radius: 20px;
+            color: var(--primary-dark);
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: 600;
+        }
+        .filter-btn.active, .filter-btn:hover { background: var(--primary); color: white; }
+        
+        .date-picker-container { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.6); padding: 5px 15px; border-radius: 20px; border: var(--glass-border); }
+        .date-picker-container label { font-weight: 700; color: var(--primary-dark); font-size: 0.95rem; }
+        .custom-date-input { border: none; background: white; padding: 6px 12px; border-radius: 12px; outline: none; font-family: inherit; font-weight: 600; color: #334155; cursor: pointer; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);}
+
+        .income-card {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 30px;
+            border-radius: var(--radius);
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 15px 30px rgba(37, 99, 235, 0.3);
+        }
+        .income-card p { font-size: 1.1rem; opacity: 0.9; margin-bottom: 10px;}
+        .income-card h2 { font-size: 3rem; margin: 0;}
+
+        .table-container {
+            background: var(--bg-glass-heavy);
+            backdrop-filter: blur(20px);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-glass);
+            border: var(--glass-border);
+            overflow-x: auto;
+        }
+        table { width: 100%; border-collapse: collapse; text-align: left;}
+        th { background: rgba(0,0,0,0.05); padding: 15px 20px; color: var(--primary-dark); border-bottom: 1px solid rgba(0,0,0,0.1);}
+        td { padding: 15px 20px; border-bottom: 1px dashed rgba(0,0,0,0.05); color: #334155;}
+        tr:hover { background: rgba(255,255,255,0.5); }
+        .row-id { font-weight: bold; color: var(--primary); }
+        .row-total { font-weight: bold; color: #10b981; }
+
+        #receiptContainer { display: none; }
+    </style>
+    <link rel="stylesheet" href="struk.css">
+</head>
+<body>
+
+    <nav class="admin-nav">
+        <div class="logo">
+            <div class="logo-circle">
+                <span style="font-weight: 800; color: var(--primary); font-size: 0.8rem; font-style: italic; font-family: 'Montserrat', sans-serif;">TRIICOF</span>
+            </div>
+            Triicof Cashier Dashboard
+        </div>
+        <div style="display: flex; gap: 15px; align-items: center;">
+            <div class="status-indicator">
+                <div class="status-dot"></div>
+                <span id="connectionStatus">Menghubungkan...</span>
+            </div>
+            <button id="btnLogout" class="btn-primary" style="background: #ef4444; border:none; padding: 8px 15px; border-radius: 10px; color:white; font-weight:bold; cursor:pointer;"><i class="fa-solid fa-right-from-bracket"></i> Keluar</button>
+        </div>
+    </nav>
+
+    <div class="container no-print">
+        
+        <!-- Tab Navigation -->
+        <div class="admin-nav">
+            <button class="admin-tab active" data-target="live-view"><i class="fa-solid fa-bell"></i> Pesanan Live</button>
+            <button class="admin-tab" data-target="history-view"><i class="fa-solid fa-chart-line"></i> Riwayat & Laporan</button>
+        </div>
+
+        <!-- 1. LIVE ORDERS SECTION -->
+        <div id="live-view" class="view-section active">
+            <div class="info-card">
+                <h2>Daftar Pesanan Baru</h2>
+                <p>Orderan pelanggan dari website akan otomatis muncul di sini tanpa perlu <i>refresh</i> halaman.</p>
+            </div>
+            <div class="orders-grid" id="ordersGrid">
+                <p id="emptyState" style="grid-column: 1 / -1; text-align: center; color: #64748b; padding: 60px; font-size: 1.1rem; font-weight: 500; background: var(--bg-glass); border-radius: 20px; border: var(--glass-border);">Belum ada pesanan masuk saat ini.</p>
+            </div>
+        </div>
+
+        <!-- 2. HISTORY & REPORTS SECTION -->
+        <div id="history-view" class="view-section">
+            
+            <div class="report-filters" id="reportFilters">
+                <button class="filter-btn active" data-filter="daily">Hari Ini</button>
+                <button class="filter-btn" data-filter="weekly">Minggu Ini</button>
+                <button class="filter-btn" data-filter="last-month">Bulan Lalu</button>
+                <div class="date-picker-container">
+                    <label>Pilihan Bulan:</label>
+                    <input type="month" id="customMonth" class="custom-date-input" title="Berdasarkan Bulan">
+                </div>
+            </div>
+            
+            <div style="text-align: right; margin-bottom: 20px;">
+                <a href="/api/export" target="_blank" class="btn-primary" style="text-decoration: none; padding: 10px 20px; border-radius: 15px; font-weight: bold; font-family: 'Poppins', sans-serif;"><i class="fa-solid fa-file-excel"></i> Unduh Laporan (Excel)</a>
+            </div>
+
+            <div class="income-card">
+                <p id="summaryLabel">Total Pendapatan (Hari Ini)</p>
+                <h2 id="summaryTotal">Rp 0</h2>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tanggal & Waktu</th>
+                            <th>ID Pesanan</th>
+                            <th>Pelanggan</th>
+                            <th>Rincian Pesanan</th>
+                            <th>Total Harga</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyTableBody">
+                        <!-- Rendered by JS -->
+                        <tr><td colspan="5" style="text-align: center; padding: 30px;">Memuat data...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Hidden area used for generating print receipts -->
+    <div id="receiptContainer"></div>
+
+    <script src="admin.js"></script>
+</body>
+</html>

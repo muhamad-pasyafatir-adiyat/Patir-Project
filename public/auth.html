@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pintu Pelanggan - Triicof Coffee</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Montserrat:wght@500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .auth-container {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(25px) saturate(200%);
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 450px;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            position: relative;
+            overflow: hidden;
+        }
+        .auth-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .auth-header h2 {
+            color: var(--primary-dark);
+            margin: 15px 0 5px;
+            font-family: 'Montserrat', sans-serif;
+        }
+        .auth-tabs {
+            display: flex;
+            background: rgba(0,0,0,0.05);
+            border-radius: 15px;
+            margin-bottom: 25px;
+            padding: 5px;
+        }
+        .auth-tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 10px;
+            font-weight: 600;
+            color: #64748b;
+            transition: all 0.3s;
+        }
+        .auth-tab.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        .auth-form {
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+        .auth-form.active {
+            display: block;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .input-group {
+            margin-bottom: 18px;
+            text-align: left;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #475569;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 15px;
+            border: 1px solid rgba(0,0,0,0.1);
+            background: rgba(255, 255, 255, 0.7);
+            font-family: inherit;
+            outline: none;
+            transition: all 0.3s;
+            box-sizing: border-box;
+        }
+        .input-group input:focus {
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2);
+        }
+        .btn-submit {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 15px;
+            width: 100%;
+            font-weight: bold;
+            font-size: 1.05rem;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+            margin-top: 10px;
+        }
+        .btn-submit:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        .error-msg {
+            color: #ef4444;
+            font-size: 0.85rem;
+            margin-top: 15px;
+            display: none;
+            background: rgba(239, 68, 68, 0.1);
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .home-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #64748b;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+        .home-link:hover { color: var(--primary); }
+    </style>
+</head>
+<body>
+
+    <div class="auth-container">
+        <div class="auth-header">
+            <div style="background: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary); box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin: 0 auto; font-size: 1.5rem;">
+                <i class="fa-solid fa-mug-hot"></i>
+            </div>
+            <h2>Selamat Datang</h2>
+            <p style="color:#64748b; font-size:0.9rem; margin:0;">Silakan Masuk untuk Memesan</p>
+        </div>
+
+        <div class="auth-tabs">
+            <div class="auth-tab active" data-target="formLogin">Masuk</div>
+            <div class="auth-tab" data-target="formRegister">Daftar Baru</div>
+        </div>
+
+        <!-- Form Login -->
+        <form id="formLogin" class="auth-form active">
+            <div class="input-group">
+                <label><i class="fa-solid fa-envelope"></i> Email / No. HP</label>
+                <input type="text" id="logContact" placeholder="Contoh: 0812345678" required>
+            </div>
+            <div class="input-group">
+                <label><i class="fa-solid fa-lock"></i> Kata Sandi</label>
+                <input type="password" id="logPassword" placeholder="Masukkan sandi akun Anda" required>
+            </div>
+            <p class="error-msg" id="logError"></p>
+            <button type="submit" class="btn-submit" id="btnLogSubmit">Masuk <i class="fa-solid fa-arrow-right"></i></button>
+        </form>
+
+        <!-- Form Register -->
+        <form id="formRegister" class="auth-form">
+            <div class="input-group">
+                <label><i class="fa-solid fa-user"></i> Nama Lengkap</label>
+                <input type="text" id="regName" placeholder="Contoh: Nando Pratama" required>
+            </div>
+            <div class="input-group">
+                <label><i class="fa-solid fa-envelope"></i> Email / No. HP</label>
+                <input type="text" id="regContact" placeholder="Contoh: 0812345678 atau budi@mail.com" required>
+            </div>
+            <div class="input-group">
+                <label><i class="fa-solid fa-lock"></i> Buat Kata Sandi</label>
+                <input type="password" id="regPassword" placeholder="Minimal 6 karakter" required minlength="6">
+            </div>
+            <p class="error-msg" id="regError"></p>
+            <button type="submit" class="btn-submit" id="btnRegSubmit">Daftar Akun <i class="fa-solid fa-user-plus"></i></button>
+        </form>
+
+        <a href="index.html" class="home-link"><i class="fa-solid fa-arrow-left"></i> Kembali ke Beranda</a>
+    </div>
+
+    <script src="auth.js"></script>
+</body>
+</html>
