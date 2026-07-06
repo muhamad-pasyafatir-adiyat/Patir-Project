@@ -69,8 +69,13 @@ const requireAuth = (req, res, next) => {
     }
 };
 
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public'), { index: false }));
 app.use(express.json({ limit: '50kb' }));
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'portfolio', 'index.html'));
+});
+
 
 // Protect the admin static files directly
 app.get('/admin.html', requireAuth, (req, res) => {

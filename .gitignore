@@ -15,3 +15,9 @@ triicof.db
 # OS
 Thumbs.db
 .DS_Store
+
+# Frontend build artifacts
+public/portfolio/
+
+# Local scaffolding scratch space
+tmp/
