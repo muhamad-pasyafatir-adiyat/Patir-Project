@@ -17,6 +17,7 @@ const IS_PROD = process.env.NODE_ENV === 'production';
 
 const ADMIN_USER = process.env.ADMIN_USER || 'admin';
 const ADMIN_PASS_HASH = process.env.ADMIN_PASS_HASH || bcrypt.hashSync(process.env.ADMIN_PASS || 'triicof2026', 10);
+const createCustomerId = () => `CUST-${crypto.randomUUID()}`;
 
 app.use(helmet({
     contentSecurityPolicy: {
@@ -56,6 +57,18 @@ const authLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 10,
     message: { success: false, message: 'Terlalu banyak percobaan. Coba lagi dalam 15 menit.' }
+});
+
+const readLimiter = rateLimit({
+    windowMs: 1 * 60 * 1000,
+    max: 60,
+    message: { error: 'Terlalu banyak permintaan. Harap tunggu sebentar.' }
+});
+
+const adminActionLimiter = rateLimit({
+    windowMs: 1 * 60 * 1000,
+    max: 30,
+    message: { success: false, message: 'Terlalu banyak aksi admin. Harap tunggu sebentar.' }
 });
 
 const requireAuth = (req, res, next) => {
@@ -214,7 +227,7 @@ app.post('/api/customer/register', authLimiter, async (req, res) => {
 
     try {
         const passwordHash = await bcrypt.hash(String(password), 10);
-        await Customer.create({ name, contact, password: passwordHash });
+        await Customer.create({ customerId: createCustomerId(), name, contact, password: passwordHash });
         req.session.regenerate((err) => {
             if (err) return res.status(500).json({ success: false, message: 'Kesalahan sesi.' });
             req.session.customer = { name, contact };
@@ -222,7 +235,11 @@ app.post('/api/customer/register', authLimiter, async (req, res) => {
         });
     } catch (err) {
         if (err && err.code === 11000) {
-            return res.status(400).json({ success: false, message: 'Email/Nomor HP sudah terdaftar!' });
+            const duplicateField = err.keyPattern ? Object.keys(err.keyPattern)[0] : '';
+            const duplicateMessage = duplicateField === 'customerId'
+                ? 'ID pelanggan bentrok. Silakan coba lagi.'
+                : 'Email/Nomor HP sudah terdaftar!';
+            return res.status(400).json({ success: false, message: duplicateMessage });
         }
         console.error('Register error:', err);
         res.status(500).json({ success: false, message: 'Terjadi kesalahan server.' });
@@ -271,7 +288,7 @@ app.post('/api/customer/logout', (req, res) => {
     res.json({ success: true });
 });
 
-app.get('/api/customer/orders', async (req, res) => {
+app.get('/api/customer/orders', readLimiter, async (req, res) => {
     if (!req.session || !req.session.customer) return res.status(401).json({ error: 'Belum login.' });
     try {
         const orders = await Order.find({ customerContact: req.session.customer.contact })
@@ -324,7 +341,7 @@ app.get('/api/stream', requireAuth, (req, res) => {
     });
 });
 
-app.get('/api/orders/pending', requireAuth, async (req, res) => {
+app.get('/api/orders/pending', requireAuth, readLimiter, async (req, res) => {
     try {
         const rows = await Order.find({ status: 'pending' }).sort({ createdAt: -1 }).lean();
         res.json(rows.map(mapOrderForAdmin));
@@ -333,7 +350,7 @@ app.get('/api/orders/pending', requireAuth, async (req, res) => {
     }
 });
 
-app.post('/api/orders/:orderId/done', requireAuth, async (req, res) => {
+app.post('/api/orders/:orderId/done', requireAuth, adminActionLimiter, async (req, res) => {
     try {
         const order = await Order.findOneAndUpdate(
             { orderId: req.params.orderId },
@@ -347,7 +364,7 @@ app.post('/api/orders/:orderId/done', requireAuth, async (req, res) => {
     }
 });
 
-app.get('/api/history', requireAuth, async (req, res) => {
+app.get('/api/history', requireAuth, readLimiter, async (req, res) => {
     try {
         const orders = await Order.find().sort({ createdAt: 1 }).lean();
         const mappedData = orders.map(o => ({
@@ -367,7 +384,7 @@ app.get('/api/history', requireAuth, async (req, res) => {
     }
 });
 
-app.get('/api/export', requireAuth, async (req, res) => {
+app.get('/api/export', requireAuth, readLimiter, async (req, res) => {
     try {
         const orders = await Order.find().sort({ createdAt: 1 }).lean();
         const wsData = [['Tanggal', 'Waktu', 'ID Pesanan', 'Nama Pelanggan', 'Rincian Pesanan', 'Total Harga', 'Metode Pembayaran', 'Catatan']];

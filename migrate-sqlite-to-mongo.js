@@ -2,6 +2,7 @@ require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
+const crypto = require('crypto');
 const { connectToDatabase, mongoose, Customer, Order } = require('./db');
 
 const sqlitePath = process.env.SQLITE_PATH || path.join(__dirname, 'triicof.db');
@@ -57,7 +58,7 @@ async function migrateCustomers(rows) {
         }
 
         const customer = new Customer({
-            customerId: row.id || undefined,
+            customerId: row.id || `CUST-${crypto.randomUUID()}`,
             name: String(row.name || '').trim(),
             contact,
             password: String(row.password || ''),

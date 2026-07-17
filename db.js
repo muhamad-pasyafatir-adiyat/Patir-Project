@@ -1,13 +1,11 @@
 const mongoose = require('mongoose');
-const crypto = require('crypto');
-
 const mongoUri = process.env.MONGODB_URI;
 
 const customerSchema = new mongoose.Schema({
     customerId: {
         type: String,
-        unique: true,
-        default: () => `CUST-${crypto.randomUUID()}`
+        required: true,
+        unique: true
     },
     name: {
         type: String,
