@@ -36,7 +36,7 @@ function closeSqliteDatabase(db) {
 
 function parseLegacyDate(value) {
     if (!value) return undefined;
-    const parsed = new Date(String(value).replace(' ', 'T'));
+    const parsed = new Date(String(value).trim().replace(/\s+/g, 'T'));
     return Number.isNaN(parsed.getTime()) ? undefined : parsed;
 }
 

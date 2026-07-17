@@ -17,7 +17,8 @@ const IS_PROD = process.env.NODE_ENV === 'production';
 
 const ADMIN_USER = process.env.ADMIN_USER || 'admin';
 const ADMIN_PASS_HASH = process.env.ADMIN_PASS_HASH || bcrypt.hashSync(process.env.ADMIN_PASS || 'triicof2026', 10);
-const createCustomerId = () => `CUST-${crypto.randomUUID()}`;
+const generateCustomerId = () => `CUST-${crypto.randomUUID()}`;
+const FILE_EXTENSION_REGEX = /\.[^/.]+$/;
 
 app.use(helmet({
     contentSecurityPolicy: {
@@ -105,7 +106,7 @@ app.get('/api/csrf-token', (req, res) => {
 });
 
 app.use((req, res, next) => {
-    if (['GET', 'HEAD', 'OPTIONS'].includes(req.method)) return next();
+    if (req.path === '/api/csrf-token' || ['GET', 'HEAD', 'OPTIONS'].includes(req.method)) return next();
     return requireCsrfToken(req, res, next);
 });
 
@@ -137,7 +138,7 @@ function buildMenu() {
     }
     let idCounter = 1;
     return files.filter(f => f.match(/\.(jpg|jpeg|png|gif)$/i)).map(file => {
-        let rawName = file.replace(/\.[^/.]+$/, '').trim();
+        let rawName = file.replace(FILE_EXTENSION_REGEX, '').trim();
         let price = 15000;
         const parts = rawName.split('-');
         if (parts.length > 1) {
@@ -254,7 +255,7 @@ app.post('/api/customer/register', authLimiter, async (req, res) => {
 
     try {
         const passwordHash = await bcrypt.hash(String(password), 10);
-        await Customer.create({ customerId: createCustomerId(), name, contact, password: passwordHash });
+        await Customer.create({ customerId: generateCustomerId(), name, contact, password: passwordHash });
         req.session.regenerate((err) => {
             if (err) return res.status(500).json({ success: false, message: 'Kesalahan sesi.' });
             req.session.customer = { name, contact };
@@ -263,10 +264,11 @@ app.post('/api/customer/register', authLimiter, async (req, res) => {
     } catch (err) {
         if (err && err.code === 11000) {
             const duplicateField = err.keyPattern ? Object.keys(err.keyPattern)[0] : '';
-            const duplicateMessage = duplicateField === 'customerId'
-                ? 'ID pelanggan bentrok. Silakan coba lagi.'
-                : 'Email/Nomor HP sudah terdaftar!';
-            return res.status(400).json({ success: false, message: duplicateMessage });
+            if (duplicateField === 'customerId') {
+                console.error('Customer ID collision detected:', err);
+                return res.status(500).json({ success: false, message: 'Terjadi kesalahan sistem. Silakan hubungi admin.' });
+            }
+            return res.status(400).json({ success: false, message: 'Email/Nomor HP sudah terdaftar!' });
         }
         console.error('Register error:', err);
         res.status(500).json({ success: false, message: 'Terjadi kesalahan server.' });

@@ -93,8 +93,6 @@ const orderSchema = new mongoose.Schema({
     timestamps: true
 });
 
-customerSchema.index({ contact: 1 }, { unique: true });
-orderSchema.index({ orderId: 1 }, { unique: true });
 orderSchema.index({ customerContact: 1, createdAt: -1 });
 orderSchema.index({ status: 1, createdAt: -1 });
 
