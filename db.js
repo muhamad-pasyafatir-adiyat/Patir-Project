@@ -1,78 +1,125 @@
-const sqlite3 = require('sqlite3').verbose();
-const path = require('path');
+const mongoose = require('mongoose');
+const crypto = require('crypto');
 
-const dbPath = path.join(__dirname, 'triicof.db');
-const db = new sqlite3.Database(dbPath, (err) => {
-    if (err) {
-        console.error('Error connecting to database', err.message);
-    } else {
-        console.log('Connected to the SQLite database (triicof.db).');
+const mongoUri = process.env.MONGODB_URI;
+
+const customerSchema = new mongoose.Schema({
+    customerId: {
+        type: String,
+        unique: true,
+        default: () => `CUST-${crypto.randomUUID()}`
+    },
+    name: {
+        type: String,
+        required: true,
+        trim: true,
+        maxlength: 60
+    },
+    contact: {
+        type: String,
+        required: true,
+        unique: true,
+        trim: true,
+        lowercase: true,
+        maxlength: 60
+    },
+    password: {
+        type: String,
+        required: true
     }
+}, {
+    collection: 'customers',
+    timestamps: true
 });
 
-// Initialize Tables
-db.serialize(() => {
-    db.run(`CREATE TABLE IF NOT EXISTS customers (
-        id TEXT PRIMARY KEY,
-        name TEXT NOT NULL,
-        contact TEXT NOT NULL UNIQUE,
-        password TEXT NOT NULL,
-        created_at TEXT DEFAULT (datetime('now', 'localtime'))
-    )`);
+const orderItemSchema = new mongoose.Schema({
+    id: { type: Number, required: true },
+    name: { type: String, required: true },
+    price: { type: Number, required: true },
+    qty: { type: Number, required: true }
+}, { _id: false });
 
-    db.run(`CREATE TABLE IF NOT EXISTS orders (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        order_id TEXT NOT NULL UNIQUE,
-        customer_name TEXT,
-        customer_contact TEXT,
-        items TEXT NOT NULL,
-        item_details TEXT,
-        total INTEGER NOT NULL,
-        payment_method TEXT,
-        notes TEXT,
-        date TEXT,
-        time TEXT,
-        status TEXT DEFAULT 'pending',
-        created_at TEXT DEFAULT (datetime('now', 'localtime'))
-    )`);
-
-    // Migration for old databases: add missing columns silently
-    db.run(`ALTER TABLE orders ADD COLUMN status TEXT DEFAULT 'pending'`, () => {});
-    db.run(`ALTER TABLE orders ADD COLUMN created_at TEXT`, () => {});
-    db.run(`ALTER TABLE customers ADD COLUMN created_at TEXT`, () => {});
+const orderSchema = new mongoose.Schema({
+    orderId: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    customerName: {
+        type: String,
+        trim: true,
+        default: ''
+    },
+    customerContact: {
+        type: String,
+        trim: true,
+        lowercase: true,
+        default: ''
+    },
+    items: {
+        type: [orderItemSchema],
+        default: []
+    },
+    itemDetails: {
+        type: String,
+        default: ''
+    },
+    total: {
+        type: Number,
+        required: true,
+        min: 0
+    },
+    paymentMethod: {
+        type: String,
+        default: 'Cash'
+    },
+    notes: {
+        type: String,
+        default: ''
+    },
+    date: {
+        type: String,
+        default: ''
+    },
+    time: {
+        type: String,
+        default: ''
+    },
+    status: {
+        type: String,
+        enum: ['pending', 'done'],
+        default: 'pending'
+    }
+}, {
+    collection: 'orders',
+    timestamps: true
 });
 
-// Helper functions using Promises
-const runAsync = (sql, params = []) => {
-    return new Promise((resolve, reject) => {
-        db.run(sql, params, function(err) {
-            if (err) reject(err);
-            else resolve(this);
-        });
-    });
-};
+customerSchema.index({ contact: 1 }, { unique: true });
+orderSchema.index({ orderId: 1 }, { unique: true });
+orderSchema.index({ customerContact: 1, createdAt: -1 });
+orderSchema.index({ status: 1, createdAt: -1 });
 
-const getAsync = (sql, params = []) => {
-    return new Promise((resolve, reject) => {
-        db.get(sql, params, (err, row) => {
-            if (err) reject(err);
-            else resolve(row);
-        });
-    });
-};
+const Customer = mongoose.models.Customer || mongoose.model('Customer', customerSchema);
+const Order = mongoose.models.Order || mongoose.model('Order', orderSchema);
 
-const allAsync = (sql, params = []) => {
-    return new Promise((resolve, reject) => {
-        db.all(sql, params, (err, rows) => {
-            if (err) reject(err);
-            else resolve(rows);
-        });
+async function connectToDatabase() {
+    if (!mongoUri) {
+        throw new Error('MONGODB_URI belum diatur. Tambahkan MONGODB_URI pada file .env.');
+    }
+
+    if (mongoose.connection.readyState === 1) return mongoose.connection;
+
+    await mongoose.connect(mongoUri, {
+        serverSelectionTimeoutMS: 10000
     });
-};
+
+    return mongoose.connection;
+}
 
 module.exports = {
-    db,
-    runAsync,
-    getAsync,
-    allAsync
+    mongoose,
+    connectToDatabase,
+    Customer,
+    Order
 };

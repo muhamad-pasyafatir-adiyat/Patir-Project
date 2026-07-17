@@ -8,7 +8,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint . --ext ts,tsx",
-    "prestart": "npm run build"
+    "prestart": "npm run build",
+    "migrate:sqlite": "node migrate-sqlite-to-mongo.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
@@ -20,6 +21,7 @@
     "framer-motion": "^12.38.0",
     "helmet": "^8.2.0",
     "lucide-react": "^0.344.0",
+    "mongoose": "^9.7.4",
     "multer": "^2.1.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
