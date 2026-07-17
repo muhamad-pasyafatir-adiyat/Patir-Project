@@ -1,18 +1,3 @@
-async function getCsrfToken() {
-    const res = await fetch('/api/csrf-token');
-    if (!res.ok) throw new Error('csrf');
-    const data = await res.json();
-    return data.csrfToken;
-}
-
-async function postWithoutBody(url) {
-    const csrfToken = await getCsrfToken();
-    return fetch(url, {
-        method: 'POST',
-        headers: { 'x-csrf-token': csrfToken }
-    });
-}
-
 const ordersGrid = document.getElementById('ordersGrid');
 const emptyState = document.getElementById('emptyState');
 const connectionStatus = document.getElementById('connectionStatus');
@@ -199,7 +184,7 @@ function printReceipt(orderId) {
 
 async function markDone(orderId) {
     try {
-        const res = await postWithoutBody(`/api/orders/${encodeURIComponent(orderId)}/done`);
+        const res = await window.CSRF.post(`/api/orders/${encodeURIComponent(orderId)}/done`);
         if (!res.ok) {
             alert('Gagal menandai pesanan selesai. Coba lagi.');
             return;
@@ -248,7 +233,7 @@ if (btnLogout) {
     btnLogout.addEventListener('click', async () => {
         if (confirm('Yakin ingin keluar dari kasir?')) {
             try {
-                await postWithoutBody('/api/logout');
+                await window.CSRF.post('/api/logout');
                 window.location.href = '/login.html';
             } catch (e) {
                 console.error('Gagal logout', e);

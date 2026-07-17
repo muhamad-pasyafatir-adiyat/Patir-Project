@@ -1,10 +1,3 @@
-async function getCsrfToken() {
-    const res = await fetch('/api/csrf-token');
-    if (!res.ok) throw new Error('csrf');
-    const data = await res.json();
-    return data.csrfToken;
-}
-
 document.addEventListener('DOMContentLoaded', () => {
     // Tab switching
     const tabs = document.querySelectorAll('.auth-tab');
@@ -33,12 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.disabled = true;
 
         try {
-            const csrfToken = await getCsrfToken();
-            const res = await fetch('/api/customer/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'x-csrf-token': csrfToken },
-                body: JSON.stringify({ contact, password })
-            });
+            const res = await window.CSRF.postJson('/api/customer/login', { contact, password });
             const data = await res.json();
             
             if (data.success) {
@@ -75,12 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.disabled = true;
 
         try {
-            const csrfToken = await getCsrfToken();
-            const res = await fetch('/api/customer/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'x-csrf-token': csrfToken },
-                body: JSON.stringify({ name, contact, password })
-            });
+            const res = await window.CSRF.postJson('/api/customer/register', { name, contact, password });
             const data = await res.json();
             
             if (data.success) {

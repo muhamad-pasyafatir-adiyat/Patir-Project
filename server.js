@@ -71,9 +71,9 @@ const adminActionLimiter = rateLimit({
     message: { success: false, message: 'Terlalu banyak aksi admin. Harap tunggu sebentar.' }
 });
 
-function ensureCsrfToken(req) {
+function issueCsrfToken(req) {
     if (!req.session) return null;
-    if (!req.session.csrfToken) req.session.csrfToken = crypto.randomBytes(32).toString('hex');
+    req.session.csrfToken = crypto.randomBytes(32).toString('hex');
     return req.session.csrfToken;
 }
 
@@ -101,7 +101,7 @@ app.use(express.static(path.join(__dirname, 'public'), { index: false }));
 app.use(express.json({ limit: '50kb' }));
 
 app.get('/api/csrf-token', (req, res) => {
-    res.json({ csrfToken: ensureCsrfToken(req) });
+    res.json({ csrfToken: issueCsrfToken(req) });
 });
 
 app.use((req, res, next) => {

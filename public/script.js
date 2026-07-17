@@ -1,27 +1,3 @@
-async function getCsrfToken() {
-    const res = await fetch('/api/csrf-token');
-    if (!res.ok) throw new Error('csrf');
-    const data = await res.json();
-    return data.csrfToken;
-}
-
-async function postJson(url, payload) {
-    const csrfToken = await getCsrfToken();
-    return fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-csrf-token': csrfToken },
-        body: JSON.stringify(payload)
-    });
-}
-
-async function postWithoutBody(url) {
-    const csrfToken = await getCsrfToken();
-    return fetch(url, {
-        method: 'POST',
-        headers: { 'x-csrf-token': csrfToken }
-    });
-}
-
 let currentUser = null;
 
 // Escape HTML untuk mencegah XSS saat render
@@ -270,7 +246,7 @@ if (btnOrder && customerNameInput && cartTotalPrice) {
         btnOrder.disabled = true;
 
         try {
-            const res = await postJson('/api/order', orderPayload);
+            const res = await window.CSRF.postJson('/api/order', orderPayload);
 
             if (res.ok) {
                 cart = [];
@@ -396,7 +372,7 @@ async function initApp() {
 
             document.getElementById('navLogout').addEventListener('click', async (e) => {
                 e.preventDefault();
-                await postWithoutBody('/api/customer/logout');
+                await window.CSRF.post('/api/customer/logout');
                 window.location.reload();
             });
             
