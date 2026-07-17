@@ -71,6 +71,24 @@ const adminActionLimiter = rateLimit({
     message: { success: false, message: 'Terlalu banyak aksi admin. Harap tunggu sebentar.' }
 });
 
+function ensureCsrfToken(req) {
+    if (!req.session) return null;
+    if (!req.session.csrfToken) req.session.csrfToken = crypto.randomBytes(32).toString('hex');
+    return req.session.csrfToken;
+}
+
+function requireCsrfToken(req, res, next) {
+    const sessionToken = req.session ? req.session.csrfToken : null;
+    const headerToken = req.get('x-csrf-token');
+    const bodyToken = req.body && typeof req.body._csrf === 'string' ? req.body._csrf : null;
+
+    if (!sessionToken || (headerToken !== sessionToken && bodyToken !== sessionToken)) {
+        return res.status(403).json({ success: false, message: 'Token keamanan tidak valid.' });
+    }
+
+    next();
+}
+
 const requireAuth = (req, res, next) => {
     if (req.session && req.session.admin) {
         next();
@@ -81,6 +99,15 @@ const requireAuth = (req, res, next) => {
 
 app.use(express.static(path.join(__dirname, 'public'), { index: false }));
 app.use(express.json({ limit: '50kb' }));
+
+app.get('/api/csrf-token', (req, res) => {
+    res.json({ csrfToken: ensureCsrfToken(req) });
+});
+
+app.use((req, res, next) => {
+    if (['GET', 'HEAD', 'OPTIONS'].includes(req.method)) return next();
+    return requireCsrfToken(req, res, next);
+});
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'portfolio', 'index.html'));

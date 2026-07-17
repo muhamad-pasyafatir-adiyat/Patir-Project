@@ -1,3 +1,10 @@
+async function getCsrfToken() {
+    const res = await fetch('/api/csrf-token');
+    if (!res.ok) throw new Error('csrf');
+    const data = await res.json();
+    return data.csrfToken;
+}
+
 document.getElementById('loginForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const u = document.getElementById('username').value;
@@ -9,9 +16,10 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
     btn.disabled = true;
 
     try {
+        const csrfToken = await getCsrfToken();
         const res = await fetch('/api/login', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'x-csrf-token': csrfToken },
             body: JSON.stringify({ username: u, password: p })
         });
         const data = await res.json();
